@@ -13,4 +13,6 @@ COPY . /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends git
 
-ENTRYPOINT [ "uvicorn", "main:app", "--reload", "--host", "0.0.0.0" ]
+CMD [ "uvicorn", "main:app", "--reload", "--host", "0.0.0.0" ]
+
+EXPOSE 8000
