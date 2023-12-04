@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from core.utilities import get_db
 from product.models import Product
 from product.schema import ProductCreate
 
@@ -23,8 +24,8 @@ def create_product(db: Session, product: ProductCreate):
     db.refresh(db_product)
     return db_product
 
-def update_product(db: Session):
+def update_product(db: Session = Depends(get_db)):
     return None
 
-def delete_product(db: Session):
+def delete_product(db: Session = Depends(get_db)):
     return None

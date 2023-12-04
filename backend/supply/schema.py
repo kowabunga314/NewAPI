@@ -1,6 +1,6 @@
 from pydantic import Field, HttpUrl
 
-from api.schema import BaseItem, BaseItemBase
+from core.schema import BaseItem, BaseItemBase
 from . import CostFactorType
 
 
