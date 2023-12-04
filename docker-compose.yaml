@@ -7,9 +7,11 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
   api: &base
     build:
-      context: ./api/
+      context: ./backend/
       dockerfile: ./Dockerfile
     container_name: api
     environment:
@@ -17,7 +19,7 @@ services:
     ports:
       - '8000:8000'
     volumes:
-      - ./api/:/app
+      - ./backend/:/app
       - /var/run/docker.sock:/var/run/docker.sock
     restart: "no"
     entrypoint: /app/entrypoint.sh

@@ -1,10 +1,23 @@
-from enum import Enum
-from fastapi import FastAPI, Path, Query
-from pydantic import BaseModel
-from typing import Annotated
+from fastapi import FastAPI
+from sqlalchemy.orm import Session
+
+from api.api import router
+from api.database import SessionLocal, engine
+
+
+# models.Base.metadata.create_all(bind=engine)
 
 
 app = FastAPI()
+app.include_router(router, prefix='/api')
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
 @app.get("/")
