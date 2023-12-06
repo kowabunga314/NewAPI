@@ -1,8 +1,7 @@
 from pydantic import BaseModel, Field
-from sqlmodel import SQLModel, Field
 
 
-class BaseItemBase(SQLModel):
+class BaseItemBase(BaseModel):
     name: str = Field(index=True)
     description: str | None = Field(
         default=None, title="The description of the item", max_length=300

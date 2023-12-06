@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     # 60 minutes * 24 hours * 8 days = 8 days
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
     SERVER_NAME: str = 'api'
-    SERVER_HOST: AnyHttpUrl = 'http://localhost'
+    SERVER_HOST: AnyHttpUrl = 'http://api'
     # BACKEND_CORS_ORIGINS is a JSON-formatted list of origins
     # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
     # "http://localhost:8080", "http://local.dockertoolbox.tiangolo.com"]'
@@ -36,7 +36,7 @@ class Settings(BaseSettings):
             return None
         return v
 
-    POSTGRES_SERVER: str = 'localhost'
+    POSTGRES_SERVER: str = 'db'
     POSTGRES_USER: str = 'postgres'
     POSTGRES_PASSWORD: str = 'postgres'
     POSTGRES_DB: str = 'postgres'

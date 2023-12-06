@@ -24,9 +24,9 @@ if config.config_file_name is not None:
 #     MaterialCost.Base.metadata,
 #     ProductionCost.Base.metadata,
 # ]
-from core.schema import SQLModel
+from database.base import Base
 target_metadata = [
-    SQLModel.metadata,
+    Base.metadata,
 ]
 
 # other values from the config, defined by the needs of env.py,
