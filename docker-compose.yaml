@@ -23,6 +23,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: "no"
     entrypoint: /app/entrypoint.sh
+    depends_on:
+      - db
     command:
       - "uvicorn"
       - "main:app"
@@ -34,5 +36,6 @@ services:
     container_name: migrations
     ports: []
     command: 
-      - "echo"
-      - "do migrations"
+      - "alembic"
+      - "upgrade"
+      - "head"
