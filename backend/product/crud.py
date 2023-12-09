@@ -1,3 +1,4 @@
+from fastapi import Depends
 from sqlalchemy.orm import Session
 
 from core.utilities import get_db

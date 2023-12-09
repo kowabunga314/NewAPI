@@ -1,7 +1,7 @@
 from fastapi import Depends, routing
 from typing import Annotated
 
-from admin.crud import get_current_user
+from core.utilities import get_current_user
 from admin.schema import UserBase
 
 
