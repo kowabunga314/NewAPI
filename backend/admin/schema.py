@@ -1,42 +1,56 @@
-from fastapi import Depends, routing
 from pydantic import BaseModel, EmailStr
-from typing import Annotated
-
-from core.security import oauth2_scheme
+from typing import Optional
 
 
-router = routing.APIRouter()
-
-
+# Shared properties
 class UserBase(BaseModel):
-    username: str
+    """
+    UserBase Shared properties
+
+    Shared properties for all user schemas.
+
+    Args:
+        BaseModel (_type_): _description_
+    """
+    email: Optional[EmailStr] = None
+    is_active: Optional[bool] = True
+    is_superuser: bool = False
+    full_name: Optional[str] = None
+
+
+# Properties to receive via API on creation
+class UserCreate(UserBase):
     email: EmailStr
-    full_name: str | None = None
-
-
-class UserIn(UserBase):
     password: str
 
 
-class UserOut(UserBase):
+# Properties to receive via API on update
+class UserUpdate(UserBase):
+    password: Optional[str] = None
+
+
+class UserInDBBase(UserBase):
+    id: Optional[int] = None
+
+    class Config:
+        orm_mode = True
+
+
+# Additional properties to return via API
+class User(UserInDBBase):
     pass
 
 
-class UserInDB(UserBase):
+# Additional properties stored in DB
+class UserInDB(UserInDBBase):
     hashed_password: str
 
 
-def fake_decode_token(token):
-    return UserOut(
-        username=token + "fakedecoded", email="john@example.com", full_name="John Doe"
-    )
+class Token(BaseModel):
+    access_token: str
+    token_type: str
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
-    user = fake_decode_token(token)
-    return user
+class TokenPayload(BaseModel):
+    sub: Optional[int] = None
 
-
-@router.get("/users/me")
-async def read_users_me(current_user: Annotated[UserBase, Depends(get_current_user)]):
-    return current_user
