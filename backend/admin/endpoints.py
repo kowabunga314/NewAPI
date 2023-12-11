@@ -10,12 +10,12 @@ from admin import models as user_model
 from admin import schema as user_schema
 from core.settings import settings
 from core.utilities import get_db, get_current_active_user, get_current_active_superuser
-from email.email import send_new_account_email
+from app_email.app_email import send_new_account_email
 
 router = APIRouter()
 
 
-@router.get("/", response_model=List[user_schema.UserSchema])
+@router.get("/", response_model=List[user_schema.User])
 def read_users(
     db: Session = Depends(get_db),
     skip: int = 0,
@@ -50,6 +50,7 @@ def create_user(
         send_new_account_email(
             email_to=user_in.email, username=user_in.email, password=user_in.password
         )
+        print('send email')
     return user
 
 

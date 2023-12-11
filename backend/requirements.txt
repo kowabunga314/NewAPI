@@ -5,7 +5,7 @@ certifi==2023.11.17
 click==8.1.7
 dnspython==2.4.2
 ecdsa==0.18.0
-emails==0.6
+# emails==0.6
 email-validator==2.1.0.post1
 fastapi==0.104.1
 h11==0.14.0
