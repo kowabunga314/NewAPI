@@ -1,32 +1,34 @@
 from fastapi import Depends
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
+from typing import List
 
+from core.crud import CRUDBase
 from core.utilities import get_db
 from product.models import Product
-from product.schema import ProductCreate
+from product.schema import ProductCreate, ProductUpdate
+
+class CRUDProduct(CRUDBase[Product, ProductCreate, ProductUpdate]):
+    def create_with_owner(
+        self, db: Session, *, obj_in: ProductCreate, owner_id: int
+    ) -> Product:
+        obj_in_data = jsonable_encoder(obj_in)
+        db_obj = self.model(**obj_in_data, owner_id=owner_id)
+        db.add(db_obj)
+        db.commit()
+        db.refresh(db_obj)
+        return db_obj
+
+    def get_multi_by_owner(
+        self, db: Session, *, owner_id: int, skip: int = 0, limit: int = 100
+    ) -> List[Product]:
+        return (
+            db.query(self.model)
+            .filter(Product.owner_id == owner_id)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
 
 
-def get_product(db: Session, product_id: int):
-    return db.query(Product).filter(Product.id == product_id).first()
-
-def query_product(db: Session, skip: int = 0, limit: int = 10):
-    return db.query(Product).offset(skip).limit(limit).all()
-
-def create_product(db: Session, product: ProductCreate):
-    # db_product = Product(
-    #     name=product.name,
-    #     description=product.description,
-    #     profit_margin=product.profit_margin,
-    #     sku=product.sku,
-    # )
-    db_product = Product(**product.model_dump())
-    db.add(db_product)
-    db.commit()
-    db.refresh(db_product)
-    return db_product
-
-def update_product(db: Session = Depends(get_db)):
-    return None
-
-def delete_product(db: Session = Depends(get_db)):
-    return None
+product = CRUDProduct(Product)

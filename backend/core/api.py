@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from admin.endpoints import router as admin_router
+from NewAPI.backend.admin.endpoints.user import router as admin_router
 # from core.security import router as security_router
 from product.endpoints import router as product_router
 from supply.endpoints import router as supply_router

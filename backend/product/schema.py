@@ -14,8 +14,19 @@ class ProductCreate(ProductBase):
     pass
 
 
-class Product(BaseItem, ProductBase):
+class ProductCreate(ProductBase):
     pass
+
+
+class ProductUpdate(ProductBase):
+    pass
+
+
+class ProductInDBBase(BaseItem, ProductBase):
 
     class Config:
         from_attributes = True
+
+
+class Product(ProductInDBBase):
+    pass
