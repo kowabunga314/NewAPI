@@ -1,29 +1,32 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float
-from sqlalchemy.orm import relationship
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, ARRAY
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from database.base_class import Base
+from admin.models import User
+from core.models import Item
 
 
-class MaterialCost(Base):
+class MaterialCost(Item):
     __tablename__ = "material_cost"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    description = Column(String)
+    id: Mapped[int] = mapped_column(ForeignKey("item.id"), primary_key=True)
     type = Column(String)
     cost = Column(Float)
     url = Column(String)
+    owner_id = Column(Integer, ForeignKey("user.id"))
+    owner: Mapped[User] = relationship("User", back_populates="material_costs")
+    # owner: Mapped[User] = mapped_column(ForeignKey("item.owner"))
 
     # tags = relationship("Tag")
 
 
-class ProductionCost(Base):
+class ProductionCost(Item):
     __tablename__ = "production_cost"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    description = Column(String)
+    id: Mapped[int] = mapped_column(ForeignKey("item.id"), primary_key=True)
     type = Column(Float)
     magnitude = Column(Float)
+    owner_id = Column(Integer, ForeignKey("user.id"))
+    owner: Mapped[User] = relationship("User", back_populates="production_costs")
+    # owner: Mapped[User] = mapped_column(ForeignKey("item.owner"))
 
     # tags = relationship("Tag")

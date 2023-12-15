@@ -1,19 +1,33 @@
-from sqlalchemy import ARRAY, Column, ForeignKey, Integer, String, Float
-from sqlalchemy.orm import relationship
+from sqlalchemy import ARRAY, Column, ForeignKey, Integer, String, Float, Table
+from sqlalchemy.orm import Mapped, mapped_column,relationship
 
-from supply.models import MaterialCost, ProductionCost
+from admin.models import User
+from core.models import Item
 from database.base_class import Base
+from supply.models import MaterialCost, ProductionCost
 
 
-class Product(Base):
+product_material_cost = Table('product_material_cost',
+                    Base.metadata,
+                    Column('product_id', Integer, ForeignKey('product.id')),
+                    Column('material_cost_id', Integer, ForeignKey('material_cost.id'))
+                    )
+
+product_production_cost = Table('product_production_cost',
+                    Base.metadata,
+                    Column('product_id', Integer, ForeignKey('product.id')),
+                    Column('production_cost_id', Integer, ForeignKey('production_cost.id'))
+                    )
+
+
+class Product(Item):
     __tablename__ = "product"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    description = Column(String)
+    id: Mapped[int] = mapped_column(ForeignKey("item.id"), primary_key=True)
     profit_margin = Column(Float)
     sku = Column(String)
-    owner_id = Column(Integer, ForeignKey("user.id"))
     tags = Column(ARRAY(String))
-    material_cost: MaterialCost = relationship(secondary='association_table')
-    production_cost: ProductionCost = relationship(secondary='association_table')
+    owner_id = Column(Integer, ForeignKey("user.id"))
+    owner: Mapped[User] = relationship("User", back_populates="products")
+    material_costs: Mapped[MaterialCost] = relationship(secondary='product_material_cost')
+    production_costs: Mapped[ProductionCost] = relationship(secondary='product_production_cost')

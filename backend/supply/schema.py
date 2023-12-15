@@ -1,10 +1,10 @@
 from pydantic import Field, HttpUrl
 
-from core.schema import BaseItem, BaseItemBase
+from core.schema import ItemBase
 from . import CostFactorType
 
 
-class CostFactorBase(BaseItemBase):
+class CostFactorBase(ItemBase):
     """
     CostFactorBase basic cost factor class
 
@@ -14,7 +14,7 @@ class CostFactorBase(BaseItemBase):
     type: CostFactorType
 
 
-class CostFactor(BaseItem, CostFactorBase):
+class CostFactor(CostFactorBase):
     """
     CostFactor full cost factor class
 
@@ -42,7 +42,7 @@ class MaterialCost(MaterialCostBase, CostFactor):
 
 
 class ProductionCostBase(CostFactorBase):
-    magnitude: float = Field(gt=0, lt=1, description="The magnitude of the cost factor must be between 0 and 1")
+    magnitude: float = Field(gt=0, description="The magnitude of the cost factor must be greater than 0")
 
     def __init__(self):
         self.type = CostFactorType.PRODUCTION
