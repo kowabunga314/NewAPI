@@ -19,6 +19,12 @@ product_production_cost = Table('product_production_cost',
                     Column('production_cost_id', Integer, ForeignKey('production_cost.id'))
                     )
 
+product_user = Table('product_user',
+                    Base.metadata,
+                    Column('product_id', Integer, ForeignKey('product.id')),
+                    Column('user_id', Integer, ForeignKey('user.id'))
+                    )
+
 
 class Product(Item):
     __tablename__ = "product"
@@ -28,6 +34,6 @@ class Product(Item):
     sku = Column(String)
     tags = Column(ARRAY(String))
     owner_id = Column(Integer, ForeignKey("user.id"))
-    owner: Mapped[User] = relationship("User", back_populates="products")
-    material_costs: Mapped[MaterialCost] = relationship(secondary='product_material_cost')
-    production_costs: Mapped[ProductionCost] = relationship(secondary='product_production_cost')
+    # owner: Mapped[User] = relationship("User", back_populates="products")
+    # material_costs: Mapped[MaterialCost] = relationship(secondary='product_material_cost')
+    # production_costs: Mapped[ProductionCost] = relationship(secondary='product_production_cost')
