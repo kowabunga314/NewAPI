@@ -1,13 +1,14 @@
 from pydantic import Field, HttpUrl
 
 from core.schema import ItemInDBBase, ItemBase
-from supply.schema import CostFactor
+from supply.schema import MaterialCostBase, ProductionCostBase
 
 
 class ProductBase(ItemBase):
     profit_margin: float = Field(gt=0, lt=1, description="The profit margin must be between 0 and 1")
     sku: str = None
-    cost_factors: list[CostFactor] = None
+    # material_costs: list[MaterialCostBase] = None
+    # production_costs: list[ProductionCostBase] = None
 
 
 class ProductCreate(ProductBase):

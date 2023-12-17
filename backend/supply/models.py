@@ -29,7 +29,7 @@ class MaterialCost(Item):
     cost = Column(Float)
     url = Column(String)
     owner_id = Column(Integer, ForeignKey("user.id"))
-    owner: Mapped[User] = relationship("User", back_populates="material_costs")
+    # owner: Mapped[User] = relationship("User", back_populates="material_costs")
     # owner: Mapped[User] = mapped_column(ForeignKey("item.owner"))
 
     # tags = relationship("Tag")
