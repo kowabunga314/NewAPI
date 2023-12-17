@@ -10,45 +10,45 @@ router = APIRouter()
 
 # Material costs
 
-@router.get("/{supply_id}/", response_model=MaterialCost)
+@router.get("/material-cost/{supply_id}/", response_model=MaterialCost)
 async def read_material_cost(*, db: Session = Depends(get_db), supply_id) -> Any:
     return None
 
-@router.get("/", response_model=list[MaterialCost])
+@router.get("/material-cost/", response_model=list[MaterialCost])
 async def query_material_cost(*, db: Session = Depends(get_db)) -> Any:
     return None
 
-@router.put("/", response_model=MaterialCost)
+@router.put("/material-cost/", response_model=MaterialCost)
 async def create_material_cost(*, db: Session = Depends(get_db)) -> Any:
     return None
 
-@router.post("/", response_model=MaterialCost)
+@router.post("/material-cost/", response_model=MaterialCost)
 async def update_material_cost(*, db: Session = Depends(get_db)) -> Any:
     return None
 
-@router.delete("/{supply_id}")
+@router.delete("/material-cost/{supply_id}")
 async def delete_material_cost(*, db: Session = Depends(get_db), supply_id) -> Any:
     return None
 
 
 # Production Costs
 
-@router.get("/{supply_id}/", response_model=ProductionCost)
+@router.get("/production-cost/{supply_id}/", response_model=ProductionCost)
 async def read_production_cost(*, db: Session = Depends(get_db), supply_id) -> Any:
     return None
 
-@router.get("/", response_model=list[ProductionCost])
+@router.get("/production-cost/", response_model=list[ProductionCost])
 async def query_production_cost(*, db: Session = Depends(get_db)) -> Any:
     return None
 
-@router.put("/", response_model=ProductionCost)
+@router.put("/production-cost/", response_model=ProductionCost)
 async def create_production_cost(*, db: Session = Depends(get_db)) -> Any:
     return None
 
-@router.post("/", response_model=ProductionCost)
+@router.post("/production-cost/", response_model=ProductionCost)
 async def update_production_cost(*, db: Session = Depends(get_db)) -> Any:
     return None
 
-@router.delete("/{supply_id}")
+@router.delete("/production-cost/{supply_id}")
 async def delete_production_cost(*, db: Session = Depends(get_db), supply_id) -> Any:
     return None
