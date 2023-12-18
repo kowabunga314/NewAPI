@@ -59,13 +59,14 @@ async def update_material_cost(
     db: Session = Depends(get_db),
     id: int,
     material_cost_in: MaterialCostUpdate,
-    current_user: User, Depends(get_current_active_user),
+    current_user: User = Depends(get_current_active_user),
 ) -> Any:
     material_cost = material_cost_crud.get(db=db, id=id)
     if not material_cost:
         raise HTTPException(status_code=404, detail="Material Cost not found")
     if not user_crud.is_superuser(current_user) and material_cost.owner_id != current_user.id:
         raise HTTPException(status_code=400, detail="User is not authorized to perform this action.")
+    material_cost = material_cost_crud.update(db=db, db_obj=material_cost, obj_in=material_cost_in)
     return material_cost
 
 @router.get("/material-cost/{id}", response_model=list[MaterialCost])
@@ -143,13 +144,14 @@ async def update_production_cost(
     db: Session = Depends(get_db),
     id: int,
     production_cost_in: ProductionCostUpdate,
-    current_user: User, Depends(get_current_active_user),
+    current_user: User = Depends(get_current_active_user),
 ) -> Any:
     production_cost = production_cost_crud.get(db=db, id=id)
     if not production_cost:
         raise HTTPException(status_code=404, detail="Production Cost not found")
     if not user_crud.is_superuser(current_user) and production_cost.owner_id != current_user.id:
         raise HTTPException(status_code=400, detail="User is not authorized to perform this action.")
+    production_cost = production_cost_crud.update(db=db, db_obj=production_cost, obj_in=production_cost_in)
     return production_cost
 
 @router.get("/production-cost/{id}", response_model=list[ProductionCost])
