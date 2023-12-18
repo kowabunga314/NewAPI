@@ -2,7 +2,6 @@ from sqlalchemy import ARRAY, Column, ForeignKey, Integer, String, Float, Table
 from sqlalchemy.orm import Mapped, mapped_column,relationship
 
 from admin.models import User
-from core.models import Item
 from database.base_class import Base
 from supply.models import MaterialCost, ProductionCost
 
@@ -26,10 +25,12 @@ product_user = Table('product_user',
                     )
 
 
-class Product(Item):
+class Product(Base):
     __tablename__ = "product"
 
-    id: Mapped[int] = mapped_column(ForeignKey("item.id"), primary_key=True)
+    id: int = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True)
+    description = Column(String, index=True)
     profit_margin = Column(Float)
     sku = Column(String)
     tags = Column(ARRAY(String))

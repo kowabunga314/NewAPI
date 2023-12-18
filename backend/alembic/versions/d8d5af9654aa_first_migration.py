@@ -1,8 +1,8 @@
 """First migration
 
-Revision ID: c0c74b68799d
+Revision ID: d8d5af9654aa
 Revises: 
-Create Date: 2023-12-17 05:05:11.860675
+Create Date: 2023-12-18 03:35:20.581111
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'c0c74b68799d'
+revision: str = 'd8d5af9654aa'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -45,33 +45,45 @@ def upgrade() -> None:
     op.create_index(op.f('ix_item_name'), 'item', ['name'], unique=False)
     op.create_table('material_cost',
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(), nullable=True),
+    sa.Column('description', sa.String(), nullable=True),
     sa.Column('type', sa.String(), nullable=True),
     sa.Column('cost', sa.Float(), nullable=True),
     sa.Column('url', sa.String(), nullable=True),
     sa.Column('owner_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['id'], ['item.id'], ),
     sa.ForeignKeyConstraint(['owner_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_index(op.f('ix_material_cost_description'), 'material_cost', ['description'], unique=False)
+    op.create_index(op.f('ix_material_cost_id'), 'material_cost', ['id'], unique=False)
+    op.create_index(op.f('ix_material_cost_name'), 'material_cost', ['name'], unique=False)
     op.create_table('product',
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(), nullable=True),
+    sa.Column('description', sa.String(), nullable=True),
     sa.Column('profit_margin', sa.Float(), nullable=True),
     sa.Column('sku', sa.String(), nullable=True),
     sa.Column('tags', sa.ARRAY(sa.String()), nullable=True),
     sa.Column('owner_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['id'], ['item.id'], ),
     sa.ForeignKeyConstraint(['owner_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_index(op.f('ix_product_description'), 'product', ['description'], unique=False)
+    op.create_index(op.f('ix_product_id'), 'product', ['id'], unique=False)
+    op.create_index(op.f('ix_product_name'), 'product', ['name'], unique=False)
     op.create_table('production_cost',
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(), nullable=True),
+    sa.Column('description', sa.String(), nullable=True),
     sa.Column('type', sa.Float(), nullable=True),
     sa.Column('magnitude', sa.Float(), nullable=True),
     sa.Column('owner_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['id'], ['item.id'], ),
     sa.ForeignKeyConstraint(['owner_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_index(op.f('ix_production_cost_description'), 'production_cost', ['description'], unique=False)
+    op.create_index(op.f('ix_production_cost_id'), 'production_cost', ['id'], unique=False)
+    op.create_index(op.f('ix_production_cost_name'), 'production_cost', ['name'], unique=False)
     op.create_table('material_cost_user',
     sa.Column('material_cost_id', sa.Integer(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
@@ -112,8 +124,17 @@ def downgrade() -> None:
     op.drop_table('product_production_cost')
     op.drop_table('product_material_cost')
     op.drop_table('material_cost_user')
+    op.drop_index(op.f('ix_production_cost_name'), table_name='production_cost')
+    op.drop_index(op.f('ix_production_cost_id'), table_name='production_cost')
+    op.drop_index(op.f('ix_production_cost_description'), table_name='production_cost')
     op.drop_table('production_cost')
+    op.drop_index(op.f('ix_product_name'), table_name='product')
+    op.drop_index(op.f('ix_product_id'), table_name='product')
+    op.drop_index(op.f('ix_product_description'), table_name='product')
     op.drop_table('product')
+    op.drop_index(op.f('ix_material_cost_name'), table_name='material_cost')
+    op.drop_index(op.f('ix_material_cost_id'), table_name='material_cost')
+    op.drop_index(op.f('ix_material_cost_description'), table_name='material_cost')
     op.drop_table('material_cost')
     op.drop_index(op.f('ix_item_name'), table_name='item')
     op.drop_index(op.f('ix_item_id'), table_name='item')

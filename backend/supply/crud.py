@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from core.crud import CRUDBase
-from supply import CostFactorType
 from supply.models import MaterialCost, ProductionCost
 from supply.schema import (
     MaterialCostCreate, MaterialCostUpdate,
@@ -16,7 +15,7 @@ class CRUDMaterialCost(CRUDBase[MaterialCost, MaterialCostCreate, MaterialCostUp
         self, db: Session, *, obj_in: MaterialCostCreate, owner_id: int
     ) -> MaterialCost:
         obj_in_data = jsonable_encoder(obj_in)
-        db_obj = self.model(**obj_in_data, owner_id=owner_id, type=CostFactorType.MATERIAL)
+        db_obj = self.model(**obj_in_data, owner_id=owner_id)
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
@@ -41,7 +40,7 @@ class CRUDProductionCost(CRUDBase[ProductionCost, ProductionCostCreate, Producti
         self, db: Session, *, obj_in: ProductionCostCreate, owner_id: int
     ) -> ProductionCost:
         obj_in_data = jsonable_encoder(obj_in)
-        db_obj = self.model(**obj_in_data, owner_id=owner_id, type=CostFactorType.PRODUCTION)
+        db_obj = self.model(**obj_in_data, owner_id=owner_id)
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)

@@ -2,7 +2,6 @@ from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, ARRA
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from admin.models import User
-from core.models import Item
 from database.base_class import Base
 
 
@@ -21,10 +20,12 @@ production_cost_user = Table('production_cost_user',
                     )
 
 
-class MaterialCost(Item):
+class MaterialCost(Base):
     __tablename__ = "material_cost"
 
-    id: Mapped[int] = mapped_column(ForeignKey("item.id"), primary_key=True)
+    id: int = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True)
+    description = Column(String, index=True)
     type = Column(String)
     cost = Column(Float)
     url = Column(String)
@@ -35,10 +36,12 @@ class MaterialCost(Item):
     # tags = relationship("Tag")
 
 
-class ProductionCost(Item):
+class ProductionCost(Base):
     __tablename__ = "production_cost"
 
-    id: Mapped[int] = mapped_column(ForeignKey("item.id"), primary_key=True)
+    id: int = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True)
+    description = Column(String, index=True)
     type = Column(Float)
     magnitude = Column(Float)
     owner_id = Column(Integer, ForeignKey("user.id"))
