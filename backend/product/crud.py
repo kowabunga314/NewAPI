@@ -1,4 +1,3 @@
-from fastapi import Depends
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 from typing import List

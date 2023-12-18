@@ -17,7 +17,7 @@ def read_products(
     db: Session = Depends(get_db),
     skip: int = 0,
     limit: int = 100,
-    current_user: Product = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_active_user),
 ) -> Any:
     """
     Retrieve products.
@@ -60,7 +60,7 @@ def update_product(
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     if not user_crud.is_superuser(current_user) and (product.owner_id != current_user.id):
-        raise HTTPException(status_code=400, detail="Not enough permissions")
+        raise HTTPException(status_code=400, detail="User is not authorized to perform this action.")
     product = product_crud.update(db=db, db_obj=product, obj_in=product_in)
     return product
 

@@ -1,6 +1,6 @@
 from pydantic import Field, HttpUrl
 
-from core.schema import ItemBase
+from core.schema import ItemBase, ItemInDBBase
 from . import CostFactorType
 
 
@@ -34,11 +34,22 @@ class MaterialCostBase(CostFactorBase):
         self.type = CostFactorType.MATERIAL
 
 
-class MaterialCost(MaterialCostBase, CostFactor):
+class MaterialCostCreate(MaterialCostBase):
     pass
+
+
+class MaterialCostUpdate(MaterialCostBase):
+    pass
+
+
+class MaterialCostInDBBase(ItemInDBBase, MaterialCostBase):
 
     class Config:
         from_attributes = True
+
+
+class MaterialCost(MaterialCostBase):
+    pass
 
 
 class ProductionCostBase(CostFactorBase):
@@ -48,8 +59,19 @@ class ProductionCostBase(CostFactorBase):
         self.type = CostFactorType.PRODUCTION
 
 
-class ProductionCost(ProductionCostBase, CostFactor):
+class ProductionCostCreate(ProductionCostBase):
     pass
+
+
+class ProductionCostUpdate(ProductionCostBase):
+    pass
+
+
+class ProductionCostInDBBase(ItemInDBBase, ProductionCostBase):
 
     class Config:
         from_attributes = True
+
+
+class ProductionCost(ProductionCostBase, CostFactor):
+    pass
