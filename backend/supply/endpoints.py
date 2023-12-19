@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import Any
+import logging
 
 from admin.crud import user as user_crud
 from admin.models import User
@@ -10,6 +11,9 @@ from supply.schema import (
     MaterialCost, MaterialCostCreate, MaterialCostUpdate,
     ProductionCost, ProductionCostCreate, ProductionCostUpdate
 )
+
+
+logger = logging.getLogger('abacus.supply.endpoints')
 
 
 router = APIRouter()
@@ -50,7 +54,9 @@ async def create_material_cost(
     Returns:
         Any: Returns a material cost
     """
+    logger.debug('Creating material cost.')
     material_cost = material_cost_crud.create_with_owner(db=db, obj_in=material_cost_in, owner_id=current_user.id)
+    logger.debug('Created material cost in DB.')
     return material_cost
 
 @router.post("/material-cost/", response_model=MaterialCost)

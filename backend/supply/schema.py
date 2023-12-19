@@ -30,9 +30,6 @@ class MaterialCostBase(ItemBase):
     cost: float = Field(ge=0, description="The price must be greater than or equal to zero")
     url: HttpUrl = None
 
-    def __init__(self):
-        self.type = CostFactorType.MATERIAL
-
 
 class MaterialCostCreate(MaterialCostBase):
     pass
@@ -54,9 +51,6 @@ class MaterialCost(MaterialCostInDBBase):
 
 class ProductionCostBase(ItemBase):
     magnitude: float = Field(gt=0, description="The magnitude of the cost factor must be greater than 0")
-
-    def __init__(self):
-        self.type = CostFactorType.PRODUCTION
 
 
 class ProductionCostCreate(ProductionCostBase):

@@ -1,6 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
+import logging
 from sqlalchemy.orm import Session
 from typing import Any, List
+
+logger = logging.getLogger('abacus.product.endpoints')
+logger.info('product endpoints instantiated...')
 
 from admin.crud import user as user_crud
 from admin.models import User
@@ -22,6 +26,7 @@ def read_products(
     """
     Retrieve products.
     """
+    logger.info('Read products...')
     if user_crud.is_superuser(current_user):
         products = product_crud.get_multi(db, skip=skip, limit=limit)
     else:
