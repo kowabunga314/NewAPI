@@ -4,28 +4,6 @@ from core.schema import ItemBase, ItemInDBBase
 from . import CostFactorType
 
 
-# class CostFactorBase(ItemBase):
-#     """
-#     CostFactorBase basic cost factor class
-
-#     Contains most of the basic fields for cost factors, but excludes any values which are generated when a record is 
-#     inserted into the database.
-#     """
-#     type: CostFactorType
-
-
-# class CostFactor(CostFactorBase):
-#     """
-#     CostFactor full cost factor class
-
-#     Contains all information required to represent the CostFactor model.
-#     """
-#     pass
-
-#     class Config:
-#         from_attributes = True
-
-
 class MaterialCostBase(ItemBase):
     cost: float = Field(ge=0, description="The price must be greater than or equal to zero")
     url: HttpUrl = None
