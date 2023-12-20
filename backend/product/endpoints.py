@@ -11,6 +11,7 @@ from admin.models import User
 from core.utilities import get_current_active_user, get_db
 from product.crud import product as product_crud
 from product.schema import Product, ProductCreate, ProductUpdate
+from supply.schema import MaterialCost
 
 
 router = APIRouter()
@@ -42,11 +43,19 @@ def create_product(
     db: Session = Depends(get_db),
     product_in: ProductCreate,
     current_user: User = Depends(get_current_active_user),
+    # material_cost_ids: list[MaterialCost]
 ) -> Any:
     """
     Create new product.
     """
-    product = product_crud.create_with_owner(db=db, obj_in=product_in, owner_id=current_user.id)
+    logger.info('Creating product.')
+    # logger.info(f'Got material costs: {material_cost_ids}')
+    product = product_crud.create_with_owner(
+        db=db,
+        obj_in=product_in,
+        owner_id=current_user.id,
+        # material_cost_ids=material_cost_ids
+    )
     return product
 
 

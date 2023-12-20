@@ -17,7 +17,7 @@ class ProductOut(ProductBase):
 
 
 class ProductCreate(ProductBase):
-    pass
+    material_cost_ids: list[int]
 
 
 class ProductUpdate(ProductBase):
@@ -25,6 +25,8 @@ class ProductUpdate(ProductBase):
 
 
 class ProductInDBBase(ItemInDBBase, ProductBase):
+    owner_id: int
+    material_cost_ids: list[int]
 
     class Config:
         from_attributes = True
