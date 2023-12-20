@@ -1,12 +1,18 @@
 from pydantic import Field, HttpUrl
 
 from core.schema import ItemBase, ItemInDBBase
-from . import CostFactorType
 
 
 class MaterialCostBase(ItemBase):
     cost: float = Field(ge=0, description="The price must be greater than or equal to zero")
     url: HttpUrl = None
+
+    class Config:
+        orm_mode = True
+
+
+class MaterialCostOut(MaterialCostBase):
+    products: 'list[ProductBase]' = []
 
 
 class MaterialCostCreate(MaterialCostBase):
@@ -47,3 +53,7 @@ class ProductionCostInDBBase(ItemInDBBase, ProductionCostBase):
 
 class ProductionCost(ProductionCostInDBBase):
     pass
+
+
+from product.schema import ProductBase
+ProductBase.model_rebuild()

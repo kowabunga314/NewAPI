@@ -1,9 +1,10 @@
 from sqlalchemy import ARRAY, Column, ForeignKey, Integer, String, Float, Table
 from sqlalchemy.orm import Mapped, mapped_column,relationship
+from typing import List
 
 from admin.models import User
 from database.base_class import Base
-from supply.models import MaterialCost, ProductionCost
+# from supply.models import MaterialCost, ProductionCost
 
 
 product_material_cost = Table('product_material_cost',
@@ -36,5 +37,12 @@ class Product(Base):
     tags = Column(ARRAY(String))
     owner_id = Column(Integer, ForeignKey("user.id"))
     # owner: Mapped[User] = relationship("User", back_populates="products")
-    # material_costs: Mapped[MaterialCost] = relationship(secondary='product_material_cost')
+    material_costs: Mapped[List['MaterialCost']] = relationship(secondary='product_material_cost', back_populates='products')
     # production_costs: Mapped[ProductionCost] = relationship(secondary='product_production_cost')
+
+
+# class ProductMaterialCost(Base):
+#     __tablename__ = 'product_material_cost'
+
+#     product_id: int = Column(ForeignKey('product.id'), primary_key=True)
+#     material_cost_id: int = Column(ForeignKey('material_cost.id'), primary_key=True)

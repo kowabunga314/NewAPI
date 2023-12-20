@@ -1,5 +1,6 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, ARRAY, Table
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from typing import List
 
 from admin.models import User
 from database.base_class import Base
@@ -30,7 +31,7 @@ class MaterialCost(Base):
     cost = Column(Float)
     url = Column(String)
     owner_id = Column(Integer, ForeignKey("user.id"))
-    # owner: Mapped[User] = relationship("User", back_populates="material_costs")
+    products: Mapped[List['Product']] = relationship(secondary='product_material_cost', back_populates="material_costs")
     # owner: Mapped[User] = mapped_column(ForeignKey("item.owner"))
 
     # tags = relationship("Tag")
