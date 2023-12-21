@@ -1,7 +1,10 @@
 from pydantic import Field, HttpUrl
+from typing import Optional
 
 from core.schema import ItemInDBBase, ItemBase
 
+
+# Base Schema #
 
 class ProductBase(ItemBase):
     profit_margin: float = Field(gt=0, default=0.45, description="The profit margin must be between 0 and 1")
@@ -10,14 +13,30 @@ class ProductBase(ItemBase):
     class Config:
         orm_mode = True
 
+class MaterialCostBase(ItemBase):
+    cost: float = Field(ge=0, description="The price must be greater than or equal to zero")
+    url: HttpUrl = None
+
+    class Config:
+        orm_mode = True
+
+class ProductionCostBase(ItemBase):
+    magnitude: float = Field(gt=0, description="The magnitude of the cost factor must be greater than 0")
+
+
+# Products #
 
 class ProductOut(ProductBase):
-    material_costs: 'list[MaterialCostBase]' = []
+    material_costs: list[MaterialCostBase]
     # production_costs: list[ProductionCostBase] = None
 
 
 class ProductCreate(ProductBase):
-    material_cost_ids: list[int]
+    material_costs: Optional[list[MaterialCostBase]]
+
+
+class ProductAPICreate(ProductBase):
+    material_cost_ids: Optional[list[int]]
 
 
 class ProductUpdate(ProductBase):
@@ -35,6 +54,51 @@ class ProductInDBBase(ItemInDBBase, ProductBase):
 class Product(ProductInDBBase):
     pass
 
+# Material Costs #
 
-from supply.schema import MaterialCostBase
-MaterialCostBase.model_rebuild()
+
+class MaterialCostOut(MaterialCostBase):
+    products: 'list[ProductBase]' = []
+
+
+class MaterialCostCreate(MaterialCostBase):
+    pass
+
+
+class MaterialCostUpdate(MaterialCostBase):
+    pass
+
+
+class MaterialCostInDBBase(ItemInDBBase, MaterialCostBase):
+
+    class Config:
+        from_attributes = True
+
+
+class MaterialCost(MaterialCostInDBBase):
+    pass
+
+
+# Production Costs #
+
+
+class ProductionCostCreate(ProductionCostBase):
+    pass
+
+
+class ProductionCostUpdate(ProductionCostBase):
+    pass
+
+
+class ProductionCostInDBBase(ItemInDBBase, ProductionCostBase):
+
+    class Config:
+        from_attributes = True
+
+
+class ProductionCost(ProductionCostInDBBase):
+    pass
+
+
+from product.schema import ProductBase
+ProductBase.model_rebuild()
