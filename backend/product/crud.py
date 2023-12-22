@@ -18,20 +18,17 @@ class CRUDProduct(CRUDBase[Product, ProductCreate, ProductUpdate]):
         logger.info('Creating model with owner.')
         logger.info(f'Input data: {obj_in}')
         logger.info(f'Input data type: {type(obj_in)}')
-        logger.info(f'Material Cost IDs: {obj_in.material_cost_ids}')
+        logger.info(f'Material Cost IDs: {obj_in.material_costs}')
+        material_costs = db.query(MaterialCost).filter(MaterialCost.id.in_(obj_in.material_costs)).all() if len(obj_in.material_costs) > 0 else []
+        logger.info(f'Material costs: {material_costs}')
         obj_in_data = jsonable_encoder(obj_in)
+        obj_in_data['material_costs'] = jsonable_encoder(material_costs)
         logger.info(f'Encoded input data: {obj_in_data}')
         logger.info(f'Encoded input data type: {type(obj_in_data)}')
-        material_costs = db.query(MaterialCost).filter(MaterialCost.id.in_(obj_in.material_cost_ids)).all() if len(obj_in.material_cost_ids) > 0 else []
-        logger.info(f'Material costs: {material_costs}')
-        # obj_in_data['material_costs'] = jsonable_encoder(material_costs)
-        del obj_in_data['material_cost_ids']
-        logger.info(f'Encoded input data: {obj_in_data}')
 
         db_obj = self.model(
             **obj_in_data,
             owner_id=owner_id,
-            material_costs = material_costs
         )
         db.add(db_obj)
         db.commit()

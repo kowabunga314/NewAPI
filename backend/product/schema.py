@@ -1,5 +1,5 @@
 from pydantic import Field, HttpUrl
-from typing import Optional
+from typing import Optional, Union
 
 from core.schema import ItemInDBBase, ItemBase
 
@@ -16,6 +16,7 @@ class ProductBase(ItemBase):
 class MaterialCostBase(ItemBase):
     cost: float = Field(ge=0, description="The price must be greater than or equal to zero")
     url: HttpUrl = None
+    type: str = None
 
     class Config:
         orm_mode = True
@@ -32,11 +33,11 @@ class ProductOut(ProductBase):
 
 
 class ProductCreate(ProductBase):
-    material_costs: Optional[list[MaterialCostBase]]
+    material_costs: Optional[Union[list[int], list[MaterialCostBase]]]
 
 
 class ProductAPICreate(ProductBase):
-    material_cost_ids: Optional[list[int]]
+    material_costs: Optional[Union[list[int], list[MaterialCostBase]]]
 
 
 class ProductUpdate(ProductBase):
@@ -45,7 +46,7 @@ class ProductUpdate(ProductBase):
 
 class ProductInDBBase(ItemInDBBase, ProductBase):
     owner_id: int
-    material_cost_ids: list[int]
+    material_costs: list[int]
 
     class Config:
         from_attributes = True
