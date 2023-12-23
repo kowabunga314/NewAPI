@@ -10,8 +10,8 @@ from admin.crud import user as user_crud
 from admin.models import User
 from core.utilities import get_current_active_user, get_db
 from product.crud import product as product_crud, material_cost as material_cost_crud, production_cost as production_cost_crud
-from product.schema import Product, ProductAPICreate, ProductCreate, ProductUpdate
-from supply.schema import MaterialCost, MaterialCostCreate, MaterialCostUpdate, ProductionCost, ProductionCostCreate, ProductionCostUpdate
+from product.schema import Product, ProductAPICreate, ProductCreate, ProductUpdate, MaterialCost, MaterialCostCreate, MaterialCostUpdate, ProductionCost, ProductionCostCreate, ProductionCostUpdate
+# from supply.schema import MaterialCost, MaterialCostCreate, MaterialCostUpdate, ProductionCost, ProductionCostCreate, ProductionCostUpdate
 
 
 router = APIRouter()
