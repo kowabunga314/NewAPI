@@ -42,12 +42,13 @@ class ProductCreate(ProductBase):
 
 class ProductUpdate(ProductBase):
     id: int
+    material_costs: Optional[list['MaterialCostOutMinimal']]
 
 
 class ProductInDBBase(ItemInDBBase, ProductBase):
     id: int
     owner_id: int
-    material_costs: list[MaterialCostBase]
+    material_costs: list['MaterialCostOutMinimal']
 
     class Config:
         from_attributes = True
@@ -109,4 +110,6 @@ class ProductionCost(ProductionCostInDBBase):
 
 ProductOut.model_rebuild()
 ProductCreate.model_rebuild()
+ProductUpdate.model_rebuild()
+ProductInDBBase.model_rebuild()
 MaterialCostOut.model_rebuild()

@@ -53,7 +53,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             update_data = obj_in
         else:
             # Get input data as dictionary while excluding any unset fields
-            update_data = obj_in.dict(exclude_unset=True)
+            update_data = obj_in.model_dump(exclude_unset=True)
         for field in obj_data:  # Model instance fields
             if field in update_data:    # Match model instance fields to input data fields
                 setattr(db_obj, field, update_data[field])

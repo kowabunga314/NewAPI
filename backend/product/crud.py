@@ -2,12 +2,12 @@ from fastapi.encoders import jsonable_encoder
 import json
 import logging
 from sqlalchemy.orm import Session
-from typing import List
+from typing import Any, Dict, List, Union
 
 from core.crud import CRUDBase
 from core.utilities import get_db
 from product.models import Product, MaterialCost, ProductionCost
-from product.schema import ProductCreate, ProductUpdate, MaterialCostCreate, MaterialCostUpdate, ProductionCostCreate, ProductionCostUpdate
+from product.schema import ProductOut, ProductCreate, ProductUpdate, ProductInDBBase, MaterialCostCreate, MaterialCostUpdate, ProductionCostCreate, ProductionCostUpdate
 
 
 logger = logging.getLogger('abacus.product.curl')
@@ -31,11 +31,8 @@ class CRUDProduct(CRUDBase[Product, ProductCreate, ProductUpdate]):
 
         # Save product to database
         db.add(db_obj)
-        # db.commit()
-        # db.refresh(db_obj)
 
         # Query material costs
-        # material_costs_db = db.query(MaterialCost).filter(MaterialCost.id.in_(obj_in.material_costs)).all() if len(obj_in.material_costs) > 0 else []
         for mc in material_costs:
             material_cost = db.query(MaterialCost).filter(MaterialCost.id == mc['id']).first()
             if not material_cost:
@@ -58,6 +55,37 @@ class CRUDProduct(CRUDBase[Product, ProductCreate, ProductUpdate]):
             .limit(limit)
             .all()
         )
+
+    def update(
+        self,
+        db: Session,
+        *,
+        db_obj: ProductInDBBase,
+        obj_in: Union[ProductUpdate, Dict[str, Any]]
+    ) -> ProductOut:
+        # Get current model instance in JSON-friendly format
+        obj_data = jsonable_encoder(db_obj)
+        if isinstance(obj_in, dict):
+            update_data = obj_in
+        else:
+            # Get input data as dictionary while excluding any unset fields
+            update_data = obj_in.model_dump(exclude_unset=True)
+        for field in obj_data:  # Model instance fields
+            if field in update_data:    # Match model instance fields to input data fields
+                setattr(db_obj, field, update_data[field])
+        db.add(db_obj)
+
+        # Add material costs if present
+        if 'material_costs' in update_data:
+            for mc in update_data['material_costs']:
+                material_cost = db.query(MaterialCost).filter(MaterialCost.id == mc['id']).first()
+                if not material_cost:
+                    raise LookupError(f'Material Cost not found: ID {mc["id"]}')
+                db_obj.material_costs.append(material_cost)
+
+        db.commit()
+        db.refresh(db_obj)
+        return db_obj
 
 
 product = CRUDProduct(Product)
