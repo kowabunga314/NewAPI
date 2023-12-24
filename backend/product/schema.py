@@ -14,7 +14,7 @@ class ProductBase(ItemBase):
         orm_mode = True
 
 class MaterialCostBase(ItemBase):
-    cost: float = Field(ge=0, description="The price must be greater than or equal to zero")
+    cost: float = Field(ge=0, description="The price must be greater than or equal to zero", default=0)
     url: HttpUrl = None
     type: str = None
 
@@ -26,27 +26,28 @@ class ProductionCostBase(ItemBase):
 
 
 # Products #
+    
+class ProductOutMinimal(ProductBase):
+    id: int
 
-class ProductOut(ProductBase):
-    material_costs: list[MaterialCostBase]
+
+class ProductOut(ProductOutMinimal):
+    material_costs: list['MaterialCostOutMinimal']
     # production_costs: list[ProductionCostBase] = None
 
 
 class ProductCreate(ProductBase):
-    material_costs: Optional[Union[list[int], list[MaterialCostBase]]]
-
-
-class ProductAPICreate(ProductBase):
-    material_costs: Optional[Union[list[int], list[MaterialCostBase]]]
+    material_costs: Optional[list['MaterialCostOutMinimal']]
 
 
 class ProductUpdate(ProductBase):
-    pass
+    id: int
 
 
 class ProductInDBBase(ItemInDBBase, ProductBase):
+    id: int
     owner_id: int
-    material_costs: list[int]
+    material_costs: list[MaterialCostBase]
 
     class Config:
         from_attributes = True
@@ -55,22 +56,27 @@ class ProductInDBBase(ItemInDBBase, ProductBase):
 class Product(ProductInDBBase):
     pass
 
+
 # Material Costs #
 
+class MaterialCostOutMinimal(MaterialCostBase):
+    id: int
 
-class MaterialCostOut(MaterialCostBase):
-    products: 'list[ProductBase]' = []
 
+class MaterialCostOut(MaterialCostOutMinimal):
+    products: list['ProductOutMinimal']
 
 class MaterialCostCreate(MaterialCostBase):
     pass
 
 
 class MaterialCostUpdate(MaterialCostBase):
-    pass
+    id: int
 
 
 class MaterialCostInDBBase(ItemInDBBase, MaterialCostBase):
+    id: int
+    products: list[ProductBase]
 
     class Config:
         from_attributes = True
@@ -101,5 +107,6 @@ class ProductionCost(ProductionCostInDBBase):
     pass
 
 
-from product.schema import ProductBase
-ProductBase.model_rebuild()
+ProductOut.model_rebuild()
+ProductCreate.model_rebuild()
+MaterialCostOut.model_rebuild()
