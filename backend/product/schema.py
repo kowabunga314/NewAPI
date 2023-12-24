@@ -1,4 +1,4 @@
-from pydantic import Field, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl
 from typing import Optional, Union
 
 from core.schema import ItemInDBBase, ItemBase
@@ -26,6 +26,10 @@ class ProductionCostBase(ItemBase):
 
 
 # Products #
+    
+class ProductById(BaseModel):
+    id: int
+    
     
 class ProductOutMinimal(ProductBase):
     id: int
@@ -59,6 +63,9 @@ class Product(ProductInDBBase):
 
 
 # Material Costs #
+
+class MaterialCostById(BaseModel):
+    id: int
 
 class MaterialCostOutMinimal(MaterialCostBase):
     id: int

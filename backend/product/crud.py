@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Union
 from core.crud import CRUDBase
 from core.utilities import get_db
 from product.models import Product, MaterialCost, ProductionCost
-from product.schema import ProductOut, ProductCreate, ProductUpdate, ProductInDBBase, MaterialCostCreate, MaterialCostUpdate, ProductionCostCreate, ProductionCostUpdate
+from product.schema import ProductById, ProductOut, ProductCreate, ProductUpdate, ProductInDBBase, MaterialCostById, MaterialCostCreate, MaterialCostUpdate, ProductionCostCreate, ProductionCostUpdate
 
 
 logger = logging.getLogger('abacus.product.curl')
@@ -86,6 +86,33 @@ class CRUDProduct(CRUDBase[Product, ProductCreate, ProductUpdate]):
         db.commit()
         db.refresh(db_obj)
         return db_obj
+    
+    def delete_material_costs_from_product(
+        self,
+        db: Session,
+        *,
+        db_obj: ProductInDBBase,
+        # obj_in: Union[ProductById, Dict[str, Any]],
+        material_costs: list[MaterialCostById]
+    ) -> ProductOut:
+        # Get current model instance in JSON-friendly format
+        obj_data = jsonable_encoder(db_obj)
+        # if isinstance(obj_in, dict):
+        #     update_data = obj_in
+        # else:
+        #     # Get input data as dictionary while excluding any unset fields
+        #     update_data = obj_in.model_dump(exclude_unset=True)
+
+        logger.info(f'Object data: {obj_data}')
+
+        # Regenerate material cost list without deleted material costs
+        db_obj.material_costs = [mc for mc in obj_data['material_costs'] if mc['id'] not in material_costs]
+
+        db.add(db_obj)
+        db.commit()
+        db.refresh(db_obj)
+        return db_obj
+
 
 
 product = CRUDProduct(Product)

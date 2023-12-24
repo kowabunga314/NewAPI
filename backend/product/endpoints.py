@@ -10,7 +10,7 @@ from admin.crud import user as user_crud
 from admin.models import User
 from core.utilities import get_current_active_user, get_db
 from product.crud import product as product_crud, material_cost as material_cost_crud, production_cost as production_cost_crud
-from product.schema import Product, ProductOut, ProductCreate, ProductUpdate, MaterialCost, MaterialCostOut, MaterialCostCreate, MaterialCostUpdate, ProductionCost, ProductionCostCreate, ProductionCostUpdate
+from product.schema import ProductById, ProductOut, ProductCreate, ProductUpdate, MaterialCostById, MaterialCostOut, MaterialCostCreate, MaterialCostUpdate, ProductionCost, ProductionCostCreate, ProductionCostUpdate
 # from supply.schema import MaterialCost, MaterialCostCreate, MaterialCostUpdate, ProductionCost, ProductionCostCreate, ProductionCostUpdate
 
 
@@ -94,6 +94,27 @@ def read_product(
         raise HTTPException(status_code=404, detail="Product not found")
     if not user_crud.is_superuser(current_user) and (product.owner_id != current_user.id):
         raise HTTPException(status_code=400, detail="Not enough permissions")
+    return product
+
+
+@router.put("products/{id}/delete_material_costs", response_model=ProductOut)
+def delete_material_costs_from_product(
+    *,
+    db: Session = Depends(get_db),
+    id: int,
+    # product_in: ProductById,
+    material_costs: list[MaterialCostById],
+    current_user: User = Depends(get_current_active_user)
+) -> Any:
+    """
+    Delete list of material costs from a product.
+    """
+    product = product_crud.get(db=db, id=id)
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    if not user_crud.is_superuser(current_user) and (product.owner_id != current_user.id):
+        raise HTTPException(status_code=400, detail="User is not authorized to perform this action.")
+    product = product_crud.delete_material_costs_from_product(db=db, db_obj=product, material_costs=material_costs)
     return product
 
 
