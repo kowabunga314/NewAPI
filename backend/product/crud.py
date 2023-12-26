@@ -103,10 +103,10 @@ class CRUDProduct(CRUDBase[Product, ProductCreate, ProductUpdate]):
         #     # Get input data as dictionary while excluding any unset fields
         #     update_data = obj_in.model_dump(exclude_unset=True)
 
-        logger.info(f'Object data: {obj_data}')
+        logger.info(f'Object data: {db_obj.material_costs}')
 
         # Regenerate material cost list without deleted material costs
-        db_obj.material_costs = [mc for mc in obj_data['material_costs'] if mc['id'] not in material_costs]
+        db_obj.material_costs = [mc for mc in db_obj.material_costs if mc.id not in [m.id for m in material_costs]]
 
         db.add(db_obj)
         db.commit()
