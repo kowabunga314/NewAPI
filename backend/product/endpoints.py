@@ -10,14 +10,14 @@ from admin.crud import user as user_crud
 from admin.models import User
 from core.utilities import get_current_active_user, get_db
 from product.crud import product as product_crud, material_cost as material_cost_crud, production_cost as production_cost_crud
-from product.schema import Product, ProductAPICreate, ProductCreate, ProductUpdate, MaterialCost, MaterialCostCreate, MaterialCostUpdate, ProductionCost, ProductionCostCreate, ProductionCostUpdate
+from product.schema import ProductById, ProductOut, ProductCreate, ProductUpdate, MaterialCostById, MaterialCostOut, MaterialCostCreate, MaterialCostUpdate, ProductionCost, ProductionCostCreate, ProductionCostUpdate
 # from supply.schema import MaterialCost, MaterialCostCreate, MaterialCostUpdate, ProductionCost, ProductionCostCreate, ProductionCostUpdate
 
 
 router = APIRouter()
 
 
-@router.get("/", response_model=List[Product])
+@router.get("/products/", response_model=List[ProductOut])
 def read_products(
     db: Session = Depends(get_db),
     skip: int = 0,
@@ -37,29 +37,29 @@ def read_products(
     return products
 
 
-@router.post("/", response_model=Product)
+@router.post("/products/", response_model=ProductOut)
 def create_product(
     *,
     db: Session = Depends(get_db),
-    product_in: ProductAPICreate,
+    product_in: ProductCreate,
     current_user: User = Depends(get_current_active_user),
-    # material_cost_ids: list[MaterialCost]
 ) -> Any:
     """
     Create new product.
     """
     logger.info('Creating product.')
-    # logger.info(f'Got material costs: {material_cost_ids}')
-    product = product_crud.create_with_owner(
-        db=db,
-        obj_in=product_in,
-        owner_id=current_user.id,
-        # material_cost_ids=material_cost_ids
-    )
+    try:
+        product = product_crud.create_with_owner(
+            db=db,
+            obj_in=product_in,
+            owner_id=current_user.id,
+        )
+    except LookupError as e:
+        raise HTTPException(status_code=404, detail=e.args)
     return product
 
 
-@router.put("/{id}", response_model=Product)
+@router.put("/products/{id}", response_model=ProductOut)
 def update_product(
     *,
     db: Session = Depends(get_db),
@@ -79,7 +79,7 @@ def update_product(
     return product
 
 
-@router.get("/{id}", response_model=Product)
+@router.get("/products/{id}", response_model=ProductOut)
 def read_product(
     *,
     db: Session = Depends(get_db),
@@ -97,7 +97,28 @@ def read_product(
     return product
 
 
-@router.delete("/{id}", response_model=Product)
+@router.put("products/{id}/delete_material_costs", response_model=ProductOut)
+def delete_material_costs_from_product(
+    *,
+    db: Session = Depends(get_db),
+    id: int,
+    # product_in: ProductById,
+    material_costs: list[MaterialCostById],
+    current_user: User = Depends(get_current_active_user)
+) -> Any:
+    """
+    Delete list of material costs from a product.
+    """
+    product = product_crud.get(db=db, id=id)
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    if not user_crud.is_superuser(current_user) and (product.owner_id != current_user.id):
+        raise HTTPException(status_code=400, detail="User is not authorized to perform this action.")
+    product = product_crud.delete_material_costs_from_product(db=db, db_obj=product, material_costs=material_costs)
+    return product
+
+
+@router.delete("/products/{id}", response_model=ProductOut)
 def delete_product(
     *,
     db: Session = Depends(get_db),
@@ -118,21 +139,26 @@ def delete_product(
 
 # Material costs
 
-@router.get("/material-cost/{supply_id}/", response_model=MaterialCost)
-async def read_material_cost(
-    *,
+@router.get("/material_costs/", response_model=List[MaterialCostOut])
+def read_material_costs(
     db: Session = Depends(get_db),
     skip: int = 0,
     limit: int = 100,
     current_user: User = Depends(get_current_active_user),
 ) -> Any:
+    """
+    Retrieve material_costs.
+    """
+    logger.info('Read material_costs...')
     if user_crud.is_superuser(current_user):
         material_costs = material_cost_crud.get_multi(db, skip=skip, limit=limit)
     else:
-        material_costs = material_cost_crud.get_multi_by_owner(db=db, owner_id=current_user.id, skip=skip, limit=limit)
+        material_costs = material_cost_crud.get_multi_by_owner(
+            db=db, owner_id=current_user.id, skip=skip, limit=limit
+        )
     return material_costs
 
-@router.put("/material-cost/", response_model=MaterialCost)
+@router.put("/material-cost/", response_model=MaterialCostOut)
 async def create_material_cost(
     *,
     db: Session = Depends(get_db),
@@ -157,7 +183,7 @@ async def create_material_cost(
     logger.debug('Created material cost in DB.')
     return material_cost
 
-@router.post("/material-cost/", response_model=MaterialCost)
+@router.post("/material-cost/", response_model=MaterialCostOut)
 async def update_material_cost(
     *,
     db: Session = Depends(get_db),
@@ -173,7 +199,7 @@ async def update_material_cost(
     material_cost = material_cost_crud.update(db=db, db_obj=material_cost, obj_in=material_cost_in)
     return material_cost
 
-@router.get("/material-cost/{id}", response_model=list[MaterialCost])
+@router.get("/material-cost/{id}", response_model=MaterialCostOut)
 async def read_material_cost(
     *,
     db: Session = Depends(get_db),
@@ -187,7 +213,7 @@ async def read_material_cost(
         raise HTTPException(status_code=400, detail="User is not authorized to perform this action.")
     return material_cost
 
-@router.delete("/material-cost/{supply_id}")
+@router.delete("/material-cost/{supply_id}", response_model=MaterialCostOut)
 async def delete_material_cost(
     *,
     db: Session = Depends(get_db),
