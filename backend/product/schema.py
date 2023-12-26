@@ -41,12 +41,12 @@ class ProductOut(ProductOutMinimal):
 
 
 class ProductCreate(ProductBase):
-    material_costs: Optional[list['MaterialCostOutMinimal']]
+    material_costs: Optional[list['MaterialCostById']]
 
 
 class ProductUpdate(ProductBase):
     id: int
-    material_costs: Optional[list['MaterialCostOutMinimal']]
+    material_costs: Optional[list['MaterialCostById']]
 
 
 class ProductInDBBase(ItemInDBBase, ProductBase):

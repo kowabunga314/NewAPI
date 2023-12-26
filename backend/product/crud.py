@@ -92,17 +92,8 @@ class CRUDProduct(CRUDBase[Product, ProductCreate, ProductUpdate]):
         db: Session,
         *,
         db_obj: ProductInDBBase,
-        # obj_in: Union[ProductById, Dict[str, Any]],
         material_costs: list[MaterialCostById]
     ) -> ProductOut:
-        # Get current model instance in JSON-friendly format
-        obj_data = jsonable_encoder(db_obj)
-        # if isinstance(obj_in, dict):
-        #     update_data = obj_in
-        # else:
-        #     # Get input data as dictionary while excluding any unset fields
-        #     update_data = obj_in.model_dump(exclude_unset=True)
-
         logger.info(f'Object data: {db_obj.material_costs}')
 
         # Regenerate material cost list without deleted material costs
