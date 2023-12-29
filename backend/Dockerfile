@@ -11,7 +11,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 COPY . /app
 
-RUN apt-get update && apt-get install -y --no-install-recommends git
+RUN apt-get update && apt-get install -y --no-install-recommends git postgresql-client
 
 CMD [ "uvicorn", "main:app", "--reload", "--host", "0.0.0.0" ]
 
