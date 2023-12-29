@@ -25,7 +25,7 @@ class ItemInDBBase(ItemBase):
     owner_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 # Properties to return to client

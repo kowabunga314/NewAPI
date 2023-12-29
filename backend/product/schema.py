@@ -11,7 +11,7 @@ class ProductBase(ItemBase):
     sku: str = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class MaterialCostBase(ItemBase):
     cost: float = Field(ge=0, description="The price must be greater than or equal to zero", default=0)
@@ -19,7 +19,7 @@ class MaterialCostBase(ItemBase):
     type: str = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class ProductionCostBase(ItemBase):
     magnitude: float = Field(gt=0, description="The magnitude of the cost factor must be greater than 0")
