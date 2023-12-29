@@ -2,9 +2,29 @@
 
 echo "Testing connection to database..."
 
-while [ $(pg_isready --host=db -q) ]
+function db_ready(){
+python <<END
+import sys
+import psycopg2
+
+try:
+    conn = psycopg2.connect(
+        dbname='postgres',
+        user='postgres',
+        host='db',
+        password='postgres',
+        port=5432,
+        connect_timeout=3
+    )
+except:
+    sys.exit(-1)
+sys.exit(0)
+END
+}
+
+until db_ready
 do
-    echo "Server is not yet available, waiting..."
+    echo "Server is not yet ready..."
     sleep 2
 done
 
