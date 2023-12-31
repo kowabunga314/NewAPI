@@ -1,5 +1,6 @@
 from datetime import timedelta
 from fastapi import Depends, HTTPException
+from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
 from admin.crud import user as crud_user
@@ -33,3 +34,7 @@ def authenticate(
         ),
         "token_type": "bearer",
     }
+
+
+def get_auth_header(token_type: str, access_token: str) -> str:
+    return f'Authorization: {token_type.capitalize()} {access_token}'
