@@ -2,12 +2,14 @@ from datetime import timedelta
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 from fastapi.testclient import TestClient
 import json
+import logging
 from main import app
 
 from core.security import create_access_token
 from core.test.test_utils import authenticate
 
 
+logger = logging.getLogger('abacus.product.tests.test_api')
 client = TestClient(app)
 email = 'a@b.c'
 password = 'password'
@@ -39,37 +41,45 @@ data = {
     'client_secret': '',
 }
 
-def test_login():
+def login_utility():
   response = client.post("/api/login/access-token", data=data)
   assert response.status_code == 200
   token = response.json()["access_token"]
   assert token is not None
   return token
-token = test_login()
+token = login_utility()
 auth_header = f'Bearer {token}'
 
 
 def test_get_product():
-    print(f'Using auth header: {auth_header}')
     response = client.get('/api/products', headers={'Authorization': auth_header})
-    print(response.__dir__())
-
+    
     assert response.status_code == 200
 
 
 def test_create_product():
     payload = {
-    'name': 'string',
-    'description': 'string',
-    'profit_margin': 0.45,
-    'sku': 'string',
-    'material_costs': [
-        {
-            'id': 0,
+        "name": "string",
+        "description": "string",
+        "profit_margin": 0.45,
+        "sku": "string",
+        "material_costs": [
+            {
+            "id": 1
+            }
+        ]
+    }
+    
+    response = client.post(
+        '/api/products',
+        headers={
+            'accept': 'application/json',
+            'Authorization': auth_header,
+            'Content-Type': 'application/json'
         },
-    ],
-}
-    response = client.post('/api/products', headers={'Authorization': auth_header}, data=payload)
+        json=payload
+    )
+    print(f'Got response: {response.text}')
 
     assert response.status_code == 200
     # assert response.json()
