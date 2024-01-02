@@ -28,7 +28,6 @@ def read_products(
     Retrieve products.
     """
     logger.info('Read products...')
-    print('Read products...')
     if user_crud.is_superuser(current_user):
         products = product_crud.get_multi(db, skip=skip, limit=limit)
     else:
