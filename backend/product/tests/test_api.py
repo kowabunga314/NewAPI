@@ -49,7 +49,12 @@ def test_create_product():
 
 def test_create_product_with_material_costs():
     from product.crud import material_cost
-    mc = material_cost.get_any(db=SessionLocal())
+    
+    try:
+        mc = material_cost.get_any(db=SessionLocal())
+    except:
+        raise
+
     product_create = ProductCreate(
         name="TestProduct1",
         description="This is a test product.",
