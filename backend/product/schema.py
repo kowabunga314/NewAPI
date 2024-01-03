@@ -35,6 +35,10 @@ class ProductOutMinimal(ProductBase):
     id: int
 
 
+class ProductOutJSON(ProductOutMinimal):
+    material_costs: list['MaterialCostOutJSON']
+
+
 class ProductOut(ProductOutMinimal):
     material_costs: list['MaterialCostOutMinimal']
     # production_costs: list[ProductionCostBase] = None
@@ -69,6 +73,10 @@ class MaterialCostById(BaseModel):
 
 class MaterialCostOutMinimal(MaterialCostBase):
     id: int
+
+
+class MaterialCostOutJSON(MaterialCostOutMinimal):
+    url: str
 
 
 class MaterialCostOut(MaterialCostOutMinimal):
