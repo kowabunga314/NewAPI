@@ -49,7 +49,7 @@ def test_create_product():
 
 def test_create_product_with_material_costs():
     from product.crud import material_cost
-    
+
     try:
         mc = material_cost.get_any(db=SessionLocal())
     except:
@@ -78,6 +78,3 @@ def test_create_product_with_material_costs():
     product_out = ProductOut(**product_create.model_dump(), id=response.json()['id'])
     product_out.material_costs = [MaterialCostOutJSON(**mc.__dict__)]
     assert response.json() == product_out.model_dump()
-
-    # {'material_costs': [{'cost': 1.0, 'description': 'Test material cost 1', 'id': 1, 'name': 'mc1', ...}]} != 
-    # {'material_costs': [{'cost': 1.0, 'description': 'Test material cost 1', 'id': 1, 'name': 'mc1', ...}]}
