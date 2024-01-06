@@ -23,7 +23,10 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         self.model = model
 
     def get_any(self, db: Session) -> Optional[ModelType]:
-        return db.query(self.model).first()
+        mc = db.query(self.model).first()
+        if mc is None:
+            raise LookupError('No MaterialCost records exist.')
+        return mc
 
     def get(self, db: Session, id: Any) -> Optional[ModelType]:
         return db.query(self.model).filter(self.model.id == id).first()

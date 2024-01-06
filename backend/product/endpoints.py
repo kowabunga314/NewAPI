@@ -3,7 +3,7 @@ import logging
 from sqlalchemy.orm import Session
 from typing import Any, List
 
-logger = logging.getLogger('abacus.product.endpoints')
+logger = logging.getLogger('abacus.product')
 logger.info('product endpoints instantiated...')
 
 from admin.crud import user as user_crud
@@ -47,7 +47,6 @@ def create_product(
     """
     Create new product.
     """
-    logger.info('Creating product.')
     try:
         product = product_crud.create_with_owner(
             db=db,
@@ -56,6 +55,8 @@ def create_product(
         )
     except LookupError as e:
         raise HTTPException(status_code=404, detail=e.args)
+    
+    logger.debug(f'Created product: {product}')
     return product
 
 

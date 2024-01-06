@@ -10,7 +10,7 @@ from product.models import Product, MaterialCost, ProductionCost
 from product.schema import ProductById, ProductOut, ProductCreate, ProductUpdate, ProductInDBBase, MaterialCostById, MaterialCostCreate, MaterialCostUpdate, ProductionCostCreate, ProductionCostUpdate
 
 
-logger = logging.getLogger('abacus.product.curl')
+logger = logging.getLogger('abacus.product')
 
 class CRUDProduct(CRUDBase[Product, ProductCreate, ProductUpdate]):
     def create_with_owner(

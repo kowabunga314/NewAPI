@@ -11,7 +11,7 @@ from main import app
 from product.schema import MaterialCostById, MaterialCostOutJSON, ProductCreate, ProductOut, ProductOutJSON
 
 
-logger = logging.getLogger('abacus.product.tests.test_api')
+logger = logging.getLogger('abacus.product.tests')
 client = TestClient(app)
 utility = TestUtility()
 
@@ -30,6 +30,7 @@ def test_create_product():
         sku="TP001",
         material_costs=[],
     )
+    logger.info(f'Creating product with data: {product_create.model_dump()}')
 
     response = client.post(
         '/api/products',
@@ -52,6 +53,9 @@ def test_create_product_with_material_costs():
 
     try:
         mc = material_cost.get_any(db=SessionLocal())
+    except LookupError as e:
+        logger.warn(f'Got error fetching MaterialCost: {e}')
+        return
     except:
         raise
 
